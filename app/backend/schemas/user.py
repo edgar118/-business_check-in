@@ -12,6 +12,15 @@ class User(BaseModel):
     class Config:
         orm_mode = True
 
+class UpdateUser(BaseModel):
+    name: str 
+    role: str
+    department_id: int
+    user_type_id: int
+    
+    class Config:
+        orm_mode = True
+
 class UserType(BaseModel):
     name: str
 
