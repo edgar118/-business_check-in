@@ -39,3 +39,7 @@ Instalación
     Para una vista detalla de los diferentes endpoints puedes acceder a la documentacion de swagger 
     
     http://localhost:8000/docs
+
+
+**Front-end se realizo con Javascript Vanilla sin ningun framework**
+![](https://github.com/edgar118/-business_check-in/blob/main/front.jpg)
