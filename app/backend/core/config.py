@@ -1,0 +1,23 @@
+
+import enum
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.declarative import declarative_base
+
+class PersonType(enum.Enum):
+    EMPLOYEE = "employee"
+    VISITOR = "visitor"
+    PROVIDER = "provider"
+
+
+URL_DATABASE = "postgresql://admin:admin@db:5432/stats_employee"
+engine = create_engine(URL_DATABASE)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+Base = declarative_base()
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
