@@ -1,5 +1,5 @@
 
-from sqlalchemy import Column, String, Integer, ForeignKey, DateTime, Enum
+from sqlalchemy import Column, String, Integer, ForeignKey, DateTime, Boolean
 from sqlalchemy.orm import relationship
 from backend.core.config import PersonType
 
@@ -14,5 +14,7 @@ class EntryExitRegister(Base):
     entry_time = Column(DateTime, index=True)
     exit_time = Column(DateTime, index=True)
     user_id = Column(Integer, ForeignKey('user.id'))
+    is_archived = Column(Boolean)
+    reason = Column(String)
 
     user = relationship("User", back_populates="entry_exit_register")

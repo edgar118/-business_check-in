@@ -1,4 +1,4 @@
-from fastapi import HTTPException
+from fastapi import HTTPException, status
 from sqlalchemy import and_
 from sqlalchemy import func
 from datetime import time
@@ -9,6 +9,17 @@ from backend.model.user_type import UserType
 from backend.core.config import PersonType
 
 class Employee():
+
+    def user_exist_document(id, db):
+        user_exist = db.query(UserModel).filter(UserModel.document_id == id).first()
+
+        return user_exist
+    
+    def user_exist_id(id, db):
+        user_exist = db.query(UserModel).filter(UserModel.id == id).first()
+
+        return user_exist
+    
     def created_user_type(type, db):
         
         db_item = UserType(**type.dict())
@@ -18,6 +29,9 @@ class Employee():
         return {"message": f"Created {type.name}"}
     
     def created(employee, db):
+
+        if Employee.user_exist_document(employee.document_id, db):
+            raise HTTPException(status_code=404, detail="User already exist")
         
         db_item = UserModel(**employee.dict())
 
@@ -27,6 +41,9 @@ class Employee():
         return {"message": f"Created {employee.name}"}
     
     def update(user, id, db):
+                 
+        if not Employee.user_exist_id(id, db) :
+            raise HTTPException(status_code=404, detail="User not found")
         
         db_item = db.query(UserModel).filter(UserModel.id == id).update(user.dict(exclude_unset=True))
         db.commit()
@@ -34,14 +51,16 @@ class Employee():
         return {"message": f"update"}
     
     def delete(id, db):
+
+        db_item = Employee.user_exist_id(id, db)            
+        if not db_item:
+            raise HTTPException(status_code=404, detail="User not found")
         
-        db_item = db.query(UserModel).filter(UserModel.id == id).first()
         db.delete(db_item)
         db.commit()
-
-        return {"message": f"delete"}
+        
+        return {"message": f"user delete"}
     
-
     def get_user(
             db, 
             start_date,
@@ -59,7 +78,7 @@ class Employee():
             conditions.append(UserModel.created_at <= end_date)
         if user_type:
             query = query.join(UserType)
-            conditions.append(UserType.name == user_type)
+            conditions.append(UserType.id == user_type)
         if department_id:
             conditions.append(UserModel.department_id == department_id)
 
@@ -69,7 +88,7 @@ class Employee():
         users = query.all()
 
         if not users:
-            raise HTTPException(status_code=404, detail="No users found")
+            raise HTTPException(status_code=404, detail="User not found")
 
         return users 
 
@@ -78,7 +97,7 @@ class Employee():
         employee = db.query(UserModel).filter(UserModel.id == entry_date.user_id).first()
 
         if not employee:
-            raise HTTPException(status_code=404, detail="Employee not found")
+            raise HTTPException(status_code=404, detail="User not found")
 
         db_entry_exit = EntryExitRegister(
             user_id=entry_date.user_id,
@@ -115,6 +134,7 @@ class Employee():
         
         if db_exit_date:
             db_exit_date.exit_time = entry_date.time
+            db_exit_date.is_archived = True
             db.commit()
         else:
             db_exit_date = EntryExitRegister(
@@ -131,7 +151,6 @@ class Employee():
     def calcule_time(id, db):
         records = db.query(EntryExitRegister).filter(
             EntryExitRegister.user_id == id,
-
         ).count()             
 
         total = 0

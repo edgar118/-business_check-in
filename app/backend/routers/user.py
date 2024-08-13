@@ -4,6 +4,7 @@ from typing import Optional
 from datetime import datetime
 
 from backend.schemas.user import User as UserSchema
+from backend.schemas.user import UpdateUser
 from backend.schemas.user import EntryExitRegisterCreate, UserType, EntryRegisterCreate
 from backend.provider.user import Employee
 from backend.core.config import get_db
@@ -22,20 +23,20 @@ def user_type(
 
 @router.post('/')
 def create(
-   department: UserSchema,
+   user: UserSchema,
    db:Session=Depends(get_db),
 
 ):  
-    return Employee.created(department, db)
+    return Employee.created(user, db)
 
 @router.put('/{id}')
 def update(
-   department: UserSchema,
+   user: UpdateUser,
    id:int,
    db:Session=Depends(get_db),
 
 ):  
-    return Employee.update(department, id, db)
+    return Employee.update(user, id, db)
 
 
 @router.delete('/{id}')
@@ -50,7 +51,7 @@ def delete(
 def get_user(
     start_date: Optional[datetime] = Query(None, description="Filter by start date"),
     end_date: Optional[datetime] = Query(None, description="Filter by end date"),
-    user_type: Optional[str] = Query(None, description="Filter by user type"),
+    user_type: Optional[int] = Query(None, description="Filter by user type"),
     department_id: Optional[int] = Query(None, description="Filter by department ID"),
     db:Session=Depends(get_db),
 
