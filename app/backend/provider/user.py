@@ -102,7 +102,7 @@ class Employee():
         db_entry_exit = EntryExitRegister(
             user_id=entry_date.user_id,
             entry_time=entry_date.time,
-            person_type=str(PersonType.EMPLOYEE),
+            person_type=employee.user_type.name,
         )
 
         db.add(db_entry_exit)
