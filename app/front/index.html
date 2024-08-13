@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Big Denim</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 2.5rem;
+        max-width: 1200px;
+        margin: 0 auto;
+        background-color: #f5f5f5;
+      }
+
+      main {
+        display: flex;
+        justify-content: space-between;
+        gap: 2rem;
+      }
+
+      .register {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        width: 40%;
+        padding: 1rem;
+        border: 1px solid #000;
+        border-radius: 0.5rem;
+        justify-content: center;
+      }
+
+      .register > h4 {
+        text-align: center;
+      }
+
+      .employee {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        gap: 1rem;
+      }
+
+      section {
+        width: 50%;
+      }
+
+      button {
+        padding: 0.5rem 1rem;
+        background-color: #4681f4;
+        border-radius: 5px;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        font-weight: bold;
+
+        &:hover {
+          background-color: #2e5f9b;
+        }
+      }
+
+      .delete-button {
+        background-color: #f44336;
+        &:hover {
+          background-color: #d32f2f;
+        }
+      }
+
+      .form-titles {
+        margin: 0;
+      }
+
+      form {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      th,
+      td {
+        border: 1px solid #000;
+        padding: 0.5rem;
+      }
+
+      th {
+        background-color: #4681f4;
+        color: #fff;
+      }
+
+      tr {
+        text-align: center;
+        height: 100%;
+      }
+
+      .actions {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: row;
+        gap: 0.5rem;
+        width: 100%;
+      }
+
+      section > h2 {
+        text-align: center;
+      }
+
+      .report {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        gap: 1rem;
+        border: #000 1px solid;
+        border-radius: 0.5rem;
+        padding: 1rem;
+      }
+
+      .report > h5 {
+        font-size: large;
+        text-align: center;
+      }
+
+      .report > button {
+        padding: 0.5rem 1rem;
+        border-radius: 5px;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+      }
+
+      .button-report {
+        width: 100%;
+      }
+
+      .button-report:nth-child(1) {
+        background-color: #5dbea3;
+
+        &:hover {
+          background-color: #3b8a6f;
+        }
+      }
+
+      .button-report:nth-child(2) {
+        background-color: #f4a846;
+
+        &:hover {
+          background-color: #9b6a2e;
+        }
+      }
+
+      .button-report:nth-child(3) {
+        background-color: #a346f4;
+
+        &:hover {
+          background-color: #6a2e9b;
+        }
+      }
+
+      .container-buttons-modal {
+        display: flex;
+        justify-content: flex-end;
+        gap: 1rem;
+      }
+
+      footer {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        margin-top: 2rem;
+      }
+    </style>
+  </head>
+
+  <body>
+    <main>
+      <section class="register">
+        <h4 class="form-titles">Registro de ingreso</h4>
+        <form id="registerForm">
+          <select id="employeeDropdown" name="employee">
+            <option value="1">Employee 1</option>
+            <option value="2">Employee 2</option>
+            <option value="3">Employee 3</option>
+          </select>
+          <h4 class="form-titles">Ingreso</h4>
+          <input
+            type="datetime-local"
+            id="start"
+            name="start"
+            placeholder="Start Date and Time"
+          />
+          <h4 class="form-titles">Salida</h4>
+          <input
+            type="datetime-local"
+            id="end"
+            name="end"
+            placeholder="End Date and Time"
+          />
+          <button type="submit">Enviar</button>
+        </form>
+      </section>
+      <section class="filters">
+        <h2>Filtros</h2>
+        <form id="filter-form">
+          <label for="filter-date-start">Fecha de inicio:</label>
+          <input type="date" id="filter-date-start" name="date-start" />
+
+          <label for="filter-date-end">Fecha de fin:</label>
+          <input type="date" id="filter-date-end" name="date-end" />
+
+          <label for="filter-employee">Empleado:</label>
+          <input type="text" id="filter-employee" name="employee" />
+
+          <label for="filter-guest">Invitado:</label>
+          <input type="text" id="filter-guest" name="guest" />
+
+          <label for="filter-supplier">Proveedor:</label>
+          <input type="text" id="filter-supplier" name="supplier" />
+
+          <button type="submit">Filtrar</button>
+        </form>
+      </section>
+      <section class="report">
+        <h5>Generar Reportes</h5>
+        <button class="button-report">Empleados</button>
+        <button class="button-report">Areas</button>
+        <button class="button-report">Cantidad de empleados</button>
+      </section>
+    </main>
+    <footer>
+      <section class="employee">
+        <h2>Ingreso de empleados</h2>
+        <button
+          style="align-self: flex-end; padding: 0.5rem 1rem"
+          id="create-employee"
+        >
+          Crear empleado
+        </button>
+        <table>
+          <thead>
+            <tr>
+              <th>Empleado</th>
+              <th>Fecha de ingreso</th>
+              <th>Fecha de salida</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </section>
+      <h4>Made with ❤️ to Big Denim</h4>
+    </footer>
+    <script>
+      const API_URL = "http://localhost:8000";
+      const createEmployeeHours = async (data) => {
+        fetch(API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            user_id: data.employee,
+            start: data.start,
+            end: data.end,
+          }),
+        });
+      };
+
+      const createEmployee = async (data) => {
+        fetch(API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: data.name,
+            document: data.document,
+            area: data.area,
+            rol: data.rol,
+          }),
+        });
+      };
+
+      const deleteEmployee = async (id) => {
+        fetch(`${API_URL}/${id}`, {
+          method: "DELETE",
+        });
+      };
+
+      const editEmployee = async (data) => {
+        fetch(`${API_URL}/${data.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: data.name,
+            document: data.document,
+            area: data.area,
+          }),
+        });
+      };
+
+      document.addEventListener("DOMContentLoaded", function () {
+        const form = document.getElementById("registerForm");
+        form.addEventListener("submit", async function (event) {
+          event.preventDefault();
+          const employee = document.getElementById("employeeDropdown").value;
+          const start = document.getElementById("start").value;
+          const end = document.getElementById("end").value;
+          await createEmployeeHours({ start, end, employee });
+          console.log(start, end);
+        });
+
+        const createEmployeeButton = document.querySelector("#create-employee");
+        createEmployeeButton.addEventListener("click", function (event) {
+          event.preventDefault();
+
+          const modal = document.createElement("div");
+          modal.style.position = "fixed";
+          modal.style.left = "0";
+          modal.style.top = "0";
+          modal.style.width = "100%";
+          modal.style.height = "100%";
+          modal.style.backgroundColor = "rgba(0, 0, 0, 0.5)";
+          modal.style.display = "flex";
+          modal.style.justifyContent = "center";
+          modal.style.alignItems = "center";
+          modal.innerHTML = `
+                  <div style="background: white; padding: 20px; border-radius: 5px;">
+                    <form id="modalForm">
+                      <h4 class="form-titles">Crear empleado</h4>
+                      <div>
+                        <label>Nombre:</label>
+                        <input type="text" id="name" name="name">
+                      </div>
+                      <div>
+                        <label>Documento de Identidad:</label>
+                        <input type="text" id="document" name="document">
+                      </div>
+                      <div>
+                        <label>Area:</label>
+                        <select id="userArea" name="userArea">
+                          <option value="1">Sistemas</option>
+                          <option value="2">Mercadeo</option>
+                          <option value="3">Producción</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label>Rol:</label>
+                        <select id="userRole" name="userRole">
+                          <option value="1">Empleado</option>
+                          <option value="2">Invitado</option>
+                          <option value="3">Proveedor</option>
+                        </select>
+                      </div>
+                      <div class="container-buttons-modal">
+                        <button class="delete-button" type="button" id="cancelButton">Cancelar</button>
+                        <button type="submit">Enviar</button>
+                      </div>
+                    </form>
+                  </div>
+                `;
+
+          function closeModal() {
+            modal.remove();
+          }
+
+          modal
+            .querySelector("#cancelButton")
+            .addEventListener("click", closeModal);
+
+          modal.addEventListener("click", function (event) {
+            if (event.target === modal) {
+              closeModal();
+            }
+          });
+
+          modal.addEventListener("submit", async function (event) {
+            event.preventDefault();
+            const name = document.getElementById("name").value;
+            const document = document.getElementById("document").value;
+            const rol = document.getElementById("userRole").value;
+            const area = document.getElementById("userArea").value;
+            await createEmployee({ name, document, rol });
+            closeModal();
+          });
+
+          document.body.appendChild(modal);
+        });
+
+        const filterForm = document.getElementById("filter-form");
+        filterForm.addEventListener("submit", function (event) {
+          event.preventDefault();
+
+          const dateStart = document.getElementById("filter-date-start").value;
+          const dateEnd = document.getElementById("filter-date-end").value;
+          const employee = document.getElementById("filter-employee").value;
+          const guest = document.getElementById("filter-guest").value;
+          const supplier = document.getElementById("filter-supplier").value;
+
+          fetchAndDisplayFilteredData(
+            dateStart,
+            dateEnd,
+            employee,
+            guest,
+            supplier
+          );
+        });
+
+        const fetchAndDisplayFilteredData = (
+          dateStart,
+          dateEnd,
+          employee,
+          guest,
+          supplier
+        ) => {
+          // Lógica para traer los datos filtrados - Ultima cosa
+          console.log(dateStart, dateEnd, employee, guest, supplier);
+        };
+
+        const fetchUsers = async () => {
+          const response = await fetch(API_URL);
+          const data = await response.json();
+          return data;
+        };
+
+        // Traerlos desde la API - quitar luego de la integración
+        const employees = [
+          {
+            name: "Employee 1",
+            startTime: "2021-09-01 08:00:00",
+            endTime: "2021-09-01 17:00:00",
+          },
+          {
+            name: "Employee 2",
+            startTime: "2021-09-02 08:00:00",
+            endTime: "2021-09-02 17:00:00",
+          },
+        ];
+
+        const tbody = document.querySelector("table tbody");
+        tbody.innerHTML = "";
+
+        // Descomentar luego de la integración con la API
+        // const employees = await fetchUsers();
+
+        employees.forEach((employee) => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${employee.name}</td>
+            <td>${employee.startTime}</td>
+            <td>${employee.endTime}</td>
+            <td>
+              <div class="actions">
+                <button>Editar</button>
+                <button class="delete-button">Eliminar</button>
+              </div>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+
+        tbody.addEventListener("click", async function (event) {
+          if (event.target.classList.contains("delete-button")) {
+            const tr = event.target.closest("tr");
+            const name = tr.querySelector("td").textContent;
+            const employee = employees.find(
+              (employee) => employee.name === name
+            );
+            try {
+              await deleteEmployee(employee.id);
+              tr.remove();
+            } catch (error) {
+              console.error(error);
+            }
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
