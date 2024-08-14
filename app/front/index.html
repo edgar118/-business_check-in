@@ -1,349 +1,552 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Big Denim</title>
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 2.5rem;
-        max-width: 1200px;
-        margin: 0 auto;
-        background-color: #f5f5f5;
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Big Denim</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 2.5rem;
+      max-width: 1200px;
+      margin: 0 auto;
+      background-color: #f5f5f5;
+    }
+
+    main {
+      display: flex;
+      justify-content: space-between;
+      gap: 2rem;
+    }
+
+    .register-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 5rem;
+    }
+
+    .register {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      width: auto;
+      padding: 1rem;
+      border: 1px solid #000;
+      border-radius: 0.5rem;
+      justify-content: center;
+    }
+
+    .register>h4 {
+      text-align: center;
+    }
+
+    .employee {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      gap: 1rem;
+    }
+
+    section {
+      width: 50%;
+    }
+
+    button {
+      padding: 0.5rem 1rem;
+      background-color: #4681f4;
+      border-radius: 5px;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+
+      &:hover {
+        background-color: #2e5f9b;
+      }
+    }
+
+    .delete-button {
+      background-color: #f44336;
+
+      &:hover {
+        background-color: #d32f2f;
+      }
+    }
+
+    .form-titles {
+      margin: 0;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      border: 1px solid #000;
+      padding: 0.5rem;
+    }
+
+    th {
+      background-color: #4681f4;
+      color: #fff;
+    }
+
+    tr {
+      text-align: center;
+      height: 100%;
+    }
+
+    .actions {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: row;
+      gap: 0.5rem;
+      width: 100%;
+    }
+
+    section>h2 {
+      text-align: center;
+    }
+
+    .report {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      gap: 1rem;
+      border: #000 1px solid;
+      border-radius: 0.5rem;
+      padding: 1rem;
+    }
+
+    .report>h5 {
+      font-size: large;
+      text-align: center;
+    }
+
+    .report>button {
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+    }
+
+    .button-report {
+      width: 100%;
+    }
+
+    .button-report:nth-child(1) {
+      background-color: #5dbea3;
+
+      &:hover {
+        background-color: #3b8a6f;
+      }
+    }
+
+    .button-report:nth-child(2) {
+      background-color: #f4a846;
+
+      &:hover {
+        background-color: #9b6a2e;
+      }
+    }
+
+    .button-report:nth-child(3) {
+      background-color: #a346f4;
+
+      &:hover {
+        background-color: #6a2e9b;
+      }
+    }
+
+    .container-buttons-modal {
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+    }
+
+    .filters {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      border: #000 1px solid;
+      border-radius: 0.5rem;
+      padding: 1rem;
+    }
+
+    footer {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      margin-top: 2rem;
+    }
+
+    .toast {
+      visibility: hidden;
+      min-width: 250px;
+      margin-left: -125px;
+      background-color: #2abcff;
+      color: #fff;
+      text-align: center;
+      border-radius: 2rem;
+      padding: 1rem;
+      position: fixed;
+      z-index: 1;
+      right: 5%;
+      bottom: 30px;
+      font-size: 17px;
+      white-space: nowrap;
+    }
+
+    .toast.success {
+      background-color: #4CAF50;
+    }
+
+    .toast.error {
+      background-color: #f44336;
+    }
+
+    .toast.warning {
+      background-color: #ff9800;
+    }
+
+    .toast.info {
+      background-color: #2196F3;
+    }
+
+
+    .toast.show {
+      visibility: visible;
+      -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+      animation: fadein 0.5s, fadeout 0.5s 2.5s;
+    }
+
+    @-webkit-keyframes fadein {
+      from {
+        bottom: 0;
+        opacity: 0;
       }
 
-      main {
-        display: flex;
-        justify-content: space-between;
-        gap: 2rem;
+      to {
+        bottom: 30px;
+        opacity: 1;
+      }
+    }
+
+    @keyframes fadein {
+      from {
+        bottom: 0;
+        opacity: 0;
       }
 
-      .register {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-        width: 40%;
-        padding: 1rem;
-        border: 1px solid #000;
-        border-radius: 0.5rem;
-        justify-content: center;
+      to {
+        bottom: 30px;
+        opacity: 1;
+      }
+    }
+
+    @-webkit-keyframes fadeout {
+      from {
+        bottom: 30px;
+        opacity: 1;
       }
 
-      .register > h4 {
-        text-align: center;
+      to {
+        bottom: 0;
+        opacity: 0;
+      }
+    }
+
+    @keyframes fadeout {
+      from {
+        bottom: 30px;
+        opacity: 1;
       }
 
-      .employee {
-        display: flex;
-        flex-direction: column;
-        width: 100%;
-        gap: 1rem;
+      to {
+        bottom: 0;
+        opacity: 0;
       }
+    }
+  </style>
+</head>
 
-      section {
-        width: 50%;
-      }
-
-      button {
-        padding: 0.5rem 1rem;
-        background-color: #4681f4;
-        border-radius: 5px;
-        color: #fff;
-        border: none;
-        cursor: pointer;
-        font-weight: bold;
-
-        &:hover {
-          background-color: #2e5f9b;
-        }
-      }
-
-      .delete-button {
-        background-color: #f44336;
-        &:hover {
-          background-color: #d32f2f;
-        }
-      }
-
-      .form-titles {
-        margin: 0;
-      }
-
-      form {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-      }
-
-      table {
-        width: 100%;
-        border-collapse: collapse;
-      }
-
-      th,
-      td {
-        border: 1px solid #000;
-        padding: 0.5rem;
-      }
-
-      th {
-        background-color: #4681f4;
-        color: #fff;
-      }
-
-      tr {
-        text-align: center;
-        height: 100%;
-      }
-
-      .actions {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-direction: row;
-        gap: 0.5rem;
-        width: 100%;
-      }
-
-      section > h2 {
-        text-align: center;
-      }
-
-      .report {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
-        gap: 1rem;
-        border: #000 1px solid;
-        border-radius: 0.5rem;
-        padding: 1rem;
-      }
-
-      .report > h5 {
-        font-size: large;
-        text-align: center;
-      }
-
-      .report > button {
-        padding: 0.5rem 1rem;
-        border-radius: 5px;
-        color: #fff;
-        border: none;
-        cursor: pointer;
-      }
-
-      .button-report {
-        width: 100%;
-      }
-
-      .button-report:nth-child(1) {
-        background-color: #5dbea3;
-
-        &:hover {
-          background-color: #3b8a6f;
-        }
-      }
-
-      .button-report:nth-child(2) {
-        background-color: #f4a846;
-
-        &:hover {
-          background-color: #9b6a2e;
-        }
-      }
-
-      .button-report:nth-child(3) {
-        background-color: #a346f4;
-
-        &:hover {
-          background-color: #6a2e9b;
-        }
-      }
-
-      .container-buttons-modal {
-        display: flex;
-        justify-content: flex-end;
-        gap: 1rem;
-      }
-
-      footer {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        margin-top: 2rem;
-      }
-    </style>
-  </head>
-
-  <body>
-    <main>
-      <section class="register">
+<body>
+  <main>
+    <section class="register-container">
+      <div class="register">
         <h4 class="form-titles">Registro de ingreso</h4>
-        <form id="registerForm">
-          <select id="employeeDropdown" name="employee">
-            <option value="1">Employee 1</option>
-            <option value="2">Employee 2</option>
-            <option value="3">Employee 3</option>
+        <form id="registerEntryForm">
+          <select id="entryEmployee" class="employeeDropdown" name="employee">
           </select>
           <h4 class="form-titles">Ingreso</h4>
-          <input
-            type="datetime-local"
-            id="start"
-            name="start"
-            placeholder="Start Date and Time"
-          />
-          <h4 class="form-titles">Salida</h4>
-          <input
-            type="datetime-local"
-            id="end"
-            name="end"
-            placeholder="End Date and Time"
-          />
+          <input type="datetime-local" id="start-date" name="start-date" placeholder="Start Date and Time" />
           <button type="submit">Enviar</button>
         </form>
-      </section>
-      <section class="filters">
-        <h2>Filtros</h2>
-        <form id="filter-form">
-          <label for="filter-date-start">Fecha de inicio:</label>
-          <input type="date" id="filter-date-start" name="date-start" />
-
-          <label for="filter-date-end">Fecha de fin:</label>
-          <input type="date" id="filter-date-end" name="date-end" />
-
-          <label for="filter-employee">Empleado:</label>
-          <input type="text" id="filter-employee" name="employee" />
-
-          <label for="filter-guest">Invitado:</label>
-          <input type="text" id="filter-guest" name="guest" />
-
-          <label for="filter-supplier">Proveedor:</label>
-          <input type="text" id="filter-supplier" name="supplier" />
-
-          <button type="submit">Filtrar</button>
+      </div>
+      <div class="register">
+        <h4 class="form-titles">Registro de salida</h4>
+        <form id="registerOutForm">
+          <select id="checkoutEmployee" class="employeeDropdown" name="employee">
+          </select>
+          <h4 class="form-titles">Salida</h4>
+          <input type="datetime-local" id="end-date" name="end-date" placeholder="End Date and Time" />
+          <button type="submit">Enviar</button>
         </form>
-      </section>
-      <section class="report">
-        <h5>Generar Reportes</h5>
-        <button class="button-report">Empleados</button>
-        <button class="button-report">Areas</button>
-        <button class="button-report">Cantidad de empleados</button>
-      </section>
-    </main>
-    <footer>
-      <section class="employee">
-        <h2>Ingreso de empleados</h2>
-        <button
-          style="align-self: flex-end; padding: 0.5rem 1rem"
-          id="create-employee"
-        >
-          Crear empleado
-        </button>
-        <table>
-          <thead>
-            <tr>
-              <th>Empleado</th>
-              <th>Fecha de ingreso</th>
-              <th>Fecha de salida</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      </section>
-      <h4>Made with ❤️ to Big Denim</h4>
-    </footer>
-    <script>
-      const API_URL = "http://localhost:8000";
-      const createEmployeeHours = async (data) => {
-        fetch(API_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            user_id: data.employee,
-            start: data.start,
-            end: data.end,
-          }),
-        });
-      };
+      </div>
+    </section>
+    <section class="filters">
+      <h2>Filtros</h2>
+      <form id="filter-form">
+        <label for="filter-date-start">Fecha de inicio:</label>
+        <input type="date" id="filter-date-start" name="date-start" />
 
-      const createEmployee = async (data) => {
-        fetch(API_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            name: data.name,
-            document: data.document,
-            area: data.area,
-            rol: data.rol,
-          }),
-        });
-      };
+        <label for="filter-date-end">Fecha de fin:</label>
+        <input type="date" id="filter-date-end" name="date-end" />
 
-      const deleteEmployee = async (id) => {
-        fetch(`${API_URL}/${id}`, {
-          method: "DELETE",
-        });
-      };
+        <label for="filter-employee">Empleado:</label>
+        <input type="text" id="filter-employee" name="employee" />
 
-      const editEmployee = async (data) => {
-        fetch(`${API_URL}/${data.id}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            name: data.name,
-            document: data.document,
-            area: data.area,
-          }),
-        });
-      };
+        <label for="filter-guest">Invitado:</label>
+        <input type="text" id="filter-guest" name="guest" />
 
-      document.addEventListener("DOMContentLoaded", function () {
-        const form = document.getElementById("registerForm");
-        form.addEventListener("submit", async function (event) {
-          event.preventDefault();
-          const employee = document.getElementById("employeeDropdown").value;
-          const start = document.getElementById("start").value;
-          const end = document.getElementById("end").value;
-          await createEmployeeHours({ start, end, employee });
-          console.log(start, end);
-        });
+        <label for="filter-supplier">Proveedor:</label>
+        <input type="text" id="filter-supplier" name="supplier" />
 
-        const createEmployeeButton = document.querySelector("#create-employee");
-        createEmployeeButton.addEventListener("click", function (event) {
-          event.preventDefault();
+        <button type="submit">Filtrar</button>
+      </form>
+    </section>
+    <section class="report">
+      <h5>Generar Reportes</h5>
+      <button class="button-report">Empleados</button>
+      <button class="button-report">Areas</button>
+      <button class="button-report">Cantidad de empleados</button>
+    </section>
+  </main>
+  <footer>
+    <section class="employee">
+      <h2>Ingreso de empleados</h2>
+      <button style="align-self: flex-end; padding: 0.5rem 1rem" id="create-employee">
+        Crear empleado
+      </button>
+      <table>
+        <thead>
+          <tr>
+            <th>Documento de identidad</th>
+            <th>Usuario</th>
+            <th>Role</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+    <h4>Made with ❤️ to Big Denim</h4>
+  </footer>
+  <script type="module">
+    const API_URL = "http://localhost:8000/api/v1";
 
-          const modal = document.createElement("div");
-          modal.style.position = "fixed";
-          modal.style.left = "0";
-          modal.style.top = "0";
-          modal.style.width = "100%";
-          modal.style.height = "100%";
-          modal.style.backgroundColor = "rgba(0, 0, 0, 0.5)";
-          modal.style.display = "flex";
-          modal.style.justifyContent = "center";
-          modal.style.alignItems = "center";
-          modal.innerHTML = `
+
+    function showToast(message, type) {
+      const toast = document.createElement("div");
+      toast.className = `toast ${type}`;
+      toast.innerText = message;
+
+      document.body.appendChild(toast);
+
+      setTimeout(function () {
+        toast.className = `toast ${type} show`;
+      }, 100);
+
+      setTimeout(function () {
+        toast.className = toast.className.replace("show", "");
+        setTimeout(function () {
+          document.body.removeChild(toast);
+        }, 500);
+      }, 3000);
+    }
+
+    const createEntryEmployeeHours = async (data) => {
+      const response = await fetch(`${API_URL}/user/entry`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          user_id: data.employee,
+          time: data.start,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        const error = new Error('HTTP error');
+        error.detail = errorData.detail || 'Unknown error';
+        throw error;
+      }
+
+      return response.json();
+    };
+
+    const createCheckoutEmployee = async (data) => {
+      const response = await fetch(`${API_URL}/user/exit`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          user_id: data.employee,
+          time: data.end,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        const error = new Error('HTTP error');
+        error.detail = errorData.detail || 'Unknown error';
+        throw error;
+      }
+
+      return response.json();
+    };
+
+    const createEmployee = async (data) => {
+
+      const response = await fetch(`${API_URL}/user`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: data.name,
+          role: data.role,
+          document_id: data.documentId,
+          department_id: data.departamentId,
+          user_type_id: data.userTypeId,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        const error = new Error('HTTP error');
+        error.detail = errorData.detail || 'Unknown error';
+        throw error;
+      }
+
+      return response.json();
+
+    };
+
+    // const deleteEmployee = async (id) => {
+    //   fetch(`${API_URL}/${id}`, {
+    //     method: "DELETE",
+    //   });
+    // };
+
+    // const editEmployee = async (data) => {
+    //   fetch(`${API_URL}/${data.id}`, {
+    //     method: "PUT",
+    //     headers: { "Content-Type": "application/json" },
+    //     body: JSON.stringify({
+    //       name: data.name,
+    //       document: data.document,
+    //       area: data.area,
+    //     }),
+    //   });
+    // };
+
+    const fetchUsers = async () => {
+
+      const response = await fetch(`${API_URL}/user/`);
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        const error = new Error('HTTP error');
+        error.detail = errorData.detail || 'Unknown error';
+        throw error;
+      }
+
+      return response.json();
+    };
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+      let usersState = []
+
+      const formEntry = document.getElementById("registerEntryForm");
+      formEntry.addEventListener("submit", async function (event) {
+        event.preventDefault();
+        const employee = document.getElementById("entryEmployee").value;
+        const start = document.getElementById("start-date").value;
+
+        try {
+          await createEntryEmployeeHours({ start, employee });
+          setTimeout(function () {
+            showToast("Registro de ingreso, fue creado exitosamente", "success");
+          }, 2000);
+        } catch (error) {
+          setTimeout(function () {
+            showToast("Algo paso! 😅", "error");
+          }, 2000);
+        }
+      });
+
+      const formExit = document.getElementById("registerOutForm");
+      formExit.addEventListener("submit", async function (event) {
+        event.preventDefault();
+        const employee = document.getElementById("checkoutEmployee").value;
+        const end = document.getElementById("end-date").value;
+        try {
+          await createCheckoutEmployee({ end, employee });
+          setTimeout(function () {
+            showToast("Registro de salida, fue creada correctamente", "success");
+          }, 2000);
+        } catch (error) {
+          setTimeout(function () {
+            showToast(`${error.detail}`, "error");
+          }, 2000);
+        }
+      });
+
+      const createEmployeeButton = document.querySelector("#create-employee");
+      createEmployeeButton.addEventListener("click", function (event) {
+        event.preventDefault();
+
+        const modal = document.createElement("div");
+        modal.style.position = "fixed";
+        modal.style.left = "0";
+        modal.style.top = "0";
+        modal.style.width = "100%";
+        modal.style.height = "100%";
+        modal.style.backgroundColor = "rgba(0, 0, 0, 0.5)";
+        modal.style.display = "flex";
+        modal.style.justifyContent = "center";
+        modal.style.alignItems = "center";
+        modal.innerHTML = `
                   <div style="background: white; padding: 20px; border-radius: 5px;">
                     <form id="modalForm">
                       <h4 class="form-titles">Crear empleado</h4>
                       <div>
                         <label>Nombre:</label>
-                        <input type="text" id="name" name="name">
+                        <input type="text" id="userName" name="userName">
                       </div>
                       <div>
                         <label>Documento de Identidad:</label>
-                        <input type="text" id="document" name="document">
+                        <input type="text" id="userDocument" name="userDocument">
                       </div>
                       <div>
                         <label>Area:</label>
-                        <select id="userArea" name="userArea">
+                        <select id="userDepartamentId" name="userDepartamentId">
                           <option value="1">Sistemas</option>
                           <option value="2">Mercadeo</option>
                           <option value="3">Producción</option>
@@ -352,6 +555,14 @@
                       <div>
                         <label>Rol:</label>
                         <select id="userRole" name="userRole">
+                          <option value="1">Sistemas</option>
+                          <option value="2">Contaduria</option>
+                          <option value="3">Adminstración</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label>Tipo:</label>
+                        <select id="userType" name="userType">
                           <option value="1">Empleado</option>
                           <option value="2">Invitado</option>
                           <option value="3">Proveedor</option>
@@ -365,121 +576,153 @@
                   </div>
                 `;
 
-          function closeModal() {
-            modal.remove();
-          }
+        function closeModal() {
+          modal.remove();
+        }
 
-          modal
-            .querySelector("#cancelButton")
-            .addEventListener("click", closeModal);
+        modal
+          .querySelector("#cancelButton")
+          .addEventListener("click", closeModal);
 
-          modal.addEventListener("click", function (event) {
-            if (event.target === modal) {
-              closeModal();
-            }
-          });
-
-          modal.addEventListener("submit", async function (event) {
-            event.preventDefault();
-            const name = document.getElementById("name").value;
-            const document = document.getElementById("document").value;
-            const rol = document.getElementById("userRole").value;
-            const area = document.getElementById("userArea").value;
-            await createEmployee({ name, document, rol });
+        modal.addEventListener("click", function (event) {
+          if (event.target === modal) {
             closeModal();
-          });
-
-          document.body.appendChild(modal);
+          }
         });
 
-        const filterForm = document.getElementById("filter-form");
-        filterForm.addEventListener("submit", function (event) {
+        modal.addEventListener("submit", async function (event) {
           event.preventDefault();
 
-          const dateStart = document.getElementById("filter-date-start").value;
-          const dateEnd = document.getElementById("filter-date-end").value;
-          const employee = document.getElementById("filter-employee").value;
-          const guest = document.getElementById("filter-guest").value;
-          const supplier = document.getElementById("filter-supplier").value;
-
-          fetchAndDisplayFilteredData(
-            dateStart,
-            dateEnd,
-            employee,
-            guest,
-            supplier
-          );
+          const name = document.getElementById("userName").value;
+          const role = document.getElementById("userRole").value;
+          const documentId = document.getElementById("userDocument").value;
+          const departamentId = document.getElementById("userDepartamentId").value;
+          const userTypeId = document.getElementById("userType").value;
+          try {
+            await createEmployee({ name, role, documentId, departamentId, userTypeId });
+            closeModal();
+            loadUsers();
+          } catch (error) {
+            setTimeout(function () {
+              showToast(`${error.detail}`, "error");
+            }, 2000);
+          }
         });
 
-        const fetchAndDisplayFilteredData = (
+        document.body.appendChild(modal);
+      });
+
+      const filterForm = document.getElementById("filter-form");
+      filterForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        const dateStart = document.getElementById("filter-date-start").value;
+        const dateEnd = document.getElementById("filter-date-end").value;
+        const employee = document.getElementById("filter-employee").value;
+        const guest = document.getElementById("filter-guest").value;
+        const supplier = document.getElementById("filter-supplier").value;
+
+        fetchAndDisplayFilteredData(
           dateStart,
           dateEnd,
           employee,
           guest,
           supplier
-        ) => {
-          // Lógica para traer los datos filtrados - Ultima cosa
-          console.log(dateStart, dateEnd, employee, guest, supplier);
-        };
+        );
+      });
 
-        const fetchUsers = async () => {
-          const response = await fetch(API_URL);
-          const data = await response.json();
-          return data;
-        };
+      const fetchAndDisplayFilteredData = (
+        dateStart,
+        dateEnd,
+        employee,
+        guest,
+        supplier
+      ) => {
+        // Lógica para traer los datos filtrados - Ultima cosa
+        console.log(dateStart, dateEnd, employee, guest, supplier);
+      };
 
-        // Traerlos desde la API - quitar luego de la integración
-        const employees = [
-          {
-            name: "Employee 1",
-            startTime: "2021-09-01 08:00:00",
-            endTime: "2021-09-01 17:00:00",
-          },
-          {
-            name: "Employee 2",
-            startTime: "2021-09-02 08:00:00",
-            endTime: "2021-09-02 17:00:00",
-          },
-        ];
+      const tbody = document.querySelector("table tbody");
+      tbody.innerHTML = "";
 
-        const tbody = document.querySelector("table tbody");
-        tbody.innerHTML = "";
+      const createTableRow = (user) => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${user.document_id}</td>
+          <td>${user.name}</td>
+          <td>${user.role}</td>
+          <td>
+            <div class="actions">
+              <button>Editar</button>
+              <button class="delete-button">Eliminar</button>
+            </div>
+          </td>
+        `;
+        return tr;
+      };
 
-        // Descomentar luego de la integración con la API
-        // const employees = await fetchUsers();
-
-        employees.forEach((employee) => {
-          const tr = document.createElement("tr");
-          tr.innerHTML = `
-            <td>${employee.name}</td>
-            <td>${employee.startTime}</td>
-            <td>${employee.endTime}</td>
-            <td>
-              <div class="actions">
-                <button>Editar</button>
-                <button class="delete-button">Eliminar</button>
-              </div>
-            </td>
-          `;
+      const loadTable = (users) => {
+        users.forEach((user) => {
+          const tr = createTableRow(user);
           tbody.appendChild(tr);
         });
+      };
 
-        tbody.addEventListener("click", async function (event) {
-          if (event.target.classList.contains("delete-button")) {
-            const tr = event.target.closest("tr");
-            const name = tr.querySelector("td").textContent;
-            const employee = employees.find(
-              (employee) => employee.name === name
-            );
-            try {
-              await deleteEmployee(employee.id);
-              tr.remove();
-            } catch (error) {
-              console.error(error);
-            }
-          }
+      const createUserOption = (user) => {
+        const option = document.createElement("option");
+        option.value = user.id;
+        option.textContent = user.name;
+        return option;
+      };
+
+      const loadUserDropdowns = (users) => {
+        const selects = document.querySelectorAll(".employeeDropdown");
+        selects.forEach((select) => {
+          users.forEach((user) => {
+            const option = createUserOption(user);
+            select.appendChild(option);
+          });
         });
+      };
+
+      const loadUsers = async () => {
+        try {
+          const users = await fetchUsers();
+          usersState = users;
+          if (Array.isArray(users)) {
+            loadUserDropdowns(users);
+            loadTable(users);
+          }
+        } catch (error) {
+          setTimeout(function () {
+            showToast("Error al traer los usuarios");
+          }, 2000);
+        }
+      };
+
+      loadUsers();
+
+      tbody.addEventListener("click", async function (event) {
+        if (event.target.classList.contains("delete-button")) {
+          const tr = event.target.closest("tr");
+          const documentId = tr.querySelector("td").textContent;
+          console.log("usersState", usersState)
+          console.log("name TR", documentId)
+          const user = usersState.find(
+            (user) => user.document_id === documentId
+          );
+
+          console.log("usuario seleccionado", user)
+          try {
+            await deleteEmployee(user.id);
+            tr.remove();
+          } catch (error) {
+            console.error(error);
+          }
+        }
       });
-    </script>
-  </body>
+    });
+  </script>
+</body>
+
 </html>

@@ -28,6 +28,10 @@ class Employee():
 
         return {"message": f"Created {type.name}"}
     
+    def get_user_type(db):
+        user_type = db.query(UserType).all()
+        return user_type
+
     def created(employee, db):
 
         if Employee.user_exist_document(employee.document_id, db):
@@ -125,8 +129,8 @@ class Employee():
         
         time_only = entry_date.time
         if time_only.time() < time(16, 0):
-            if entry_date.reason not in ["Cita médica", "Calamidad", "Diligencia personal"]:
-                raise HTTPException(status_code=400, detail="Invalid reason. Must be one of: Cita médica, Calamidad, Diligencia personal.")
+            if entry_date.reason not in ["Cita médica", "Calamidad", "Diligencia personal"] and db_exit_date is not None:
+                raise HTTPException(status_code=400, detail="Salida antes de tiempo, ingrese razon. Razones validas: Cita médica, Calamidad, Diligencia personal.")
             db_exit_date.reason = entry_date.reason
     
         if db_exit_date is None:
@@ -174,3 +178,9 @@ class Employee():
         ).count()
 
         return {"message": f"total employed in company {records}"}
+    
+    def check_in(db):
+        user = db.query(UserModel).all()
+
+        return user
+

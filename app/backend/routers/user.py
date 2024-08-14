@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
-from typing import Optional
+from typing import List, Optional
 from datetime import datetime
 
 from backend.schemas.user import User as UserSchema
@@ -64,6 +64,15 @@ def get_user(
             department_id
     )
 
+@router.get('/type')
+def get_user(
+    db:Session=Depends(get_db)
+
+):  
+    return Employee.get_user_type(
+            db
+    )
+
 @router.post("/entry")
 def register_entry_time(
     entry_date: EntryRegisterCreate,
@@ -77,6 +86,12 @@ def register_exit_time(
     db: Session = Depends(get_db)
     ):
     return Employee.register_exit_time(exit_date, db)
+
+@router.get("/check_in", response_model=List[UserSchema])
+def check_in(
+    db: Session = Depends(get_db)
+    ):
+    return Employee.check_in(db)
 
 @router.get("/calculate/{id}")
 def register_entry_time(
