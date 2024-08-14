@@ -14,7 +14,7 @@ class EntryExitRegisterSchema(BaseModel):
 
 class User(BaseModel):
     name: str 
-    role: str
+    role: int
     document_id: int
     department_id: int
     user_type_id: int

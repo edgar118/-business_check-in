@@ -37,6 +37,9 @@ class Employee():
         if Employee.user_exist_document(employee.document_id, db):
             raise HTTPException(status_code=404, detail="User already exist")
         
+        type = db.query(UserType).filter(UserType.id == employee.role).first()
+
+        employee.role = type.name
         db_item = UserModel(**employee.dict())
 
         db.add(db_item)
