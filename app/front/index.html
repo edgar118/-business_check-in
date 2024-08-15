@@ -68,7 +68,7 @@
       }
     }
 
-    .delete-button {
+    .cancel-button {
       background-color: #f44336;
 
       &:hover {
@@ -314,29 +314,28 @@
     <section class="filters">
       <h2>Filtros</h2>
       <form id="filter-form">
-        <label for="filter-date-start">Fecha de inicio:</label>
-        <input type="date" id="filter-date-start" name="date-start" />
-
-        <label for="filter-date-end">Fecha de fin:</label>
-        <input type="date" id="filter-date-end" name="date-end" />
-
-        <label for="filter-employee">Empleado:</label>
-        <input type="text" id="filter-employee" name="employee" />
-
-        <label for="filter-guest">Invitado:</label>
-        <input type="text" id="filter-guest" name="guest" />
-
-        <label for="filter-supplier">Proveedor:</label>
-        <input type="text" id="filter-supplier" name="supplier" />
-
-        <button type="submit">Filtrar</button>
+        <input type="date" id="startDate">
+        <input type="date" id="endDate">
+        <select id="userTypeFilter">
+            <option></option>
+            <option value="1">Empleado</option>
+            <option value="2">Invitado</option>
+            <option value="3">Proveedor</option>
+        </select>
+        <select id="departmentIdFilter">
+            <option></option>
+            <option value="1">Sistemas</option>
+            <option value="2">Mercadeo</option>
+            <option value="3">Producción</option>
+        </select>
+        <button id="filterButton">Aplicar Filtros</button>
       </form>
     </section>
     <section class="report">
       <h5>Generar Reportes</h5>
-      <button class="button-report">Empleados</button>
-      <button class="button-report">Areas</button>
-      <button class="button-report">Cantidad de empleados</button>
+      <button class="button-report1">Empleados</button>
+      <button class="button-report2">Areas</button>
+      <button class="button-report3">Cantidad de empleados</button>
     </section>
   </main>
   <footer>
@@ -351,6 +350,7 @@
             <th>Documento de identidad</th>
             <th>Usuario</th>
             <th>Role</th>
+            <th>entrada</th>
             <th>Acciones</th>
           </tr>
         </thead>
@@ -424,7 +424,7 @@
 
     const createEmployee = async (data) => {
 
-      const response = await fetch(`${API_URL}/user`, {
+      const response = await fetch(`${API_URL}/user/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -464,10 +464,10 @@
     //     }),
     //   });
     // };
-
+  
     const fetchUsers = async () => {
 
-      const response = await fetch(`${API_URL}/user/`);
+      const response = await fetch(`${API_URL}/user`);
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -569,7 +569,7 @@
                         </select>
                       </div>
                       <div class="container-buttons-modal">
-                        <button class="delete-button" type="button" id="cancelButton">Cancelar</button>
+                        <button class="cancel-button" type="button" id="cancelButton">Cancelar</button>
                         <button type="submit">Enviar</button>
                       </div>
                     </form>
@@ -597,7 +597,7 @@
           const role = document.getElementById("userRole").value;
           const documentId = document.getElementById("userDocument").value;
           const departamentId = document.getElementById("userDepartamentId").value;
-          const userTypeId = document.getElementById("userType").value;
+          const userTypeId = document.getElementById("userTypeFilter").value;
           try {
             await createEmployee({ name, role, documentId, departamentId, userTypeId });
             closeModal();
@@ -615,58 +615,106 @@
       const filterForm = document.getElementById("filter-form");
       filterForm.addEventListener("submit", function (event) {
         event.preventDefault();
-
-        const dateStart = document.getElementById("filter-date-start").value;
-        const dateEnd = document.getElementById("filter-date-end").value;
-        const employee = document.getElementById("filter-employee").value;
-        const guest = document.getElementById("filter-guest").value;
-        const supplier = document.getElementById("filter-supplier").value;
+        
+        const dateStart = document.getElementById("startDate").value;
+        const dateEnd = document.getElementById("endDate").value;
+        const employee = document.getElementById("userTypeFilter").value;
+        const department = document.getElementById("departmentIdFilter").value;
 
         fetchAndDisplayFilteredData(
           dateStart,
           dateEnd,
           employee,
-          guest,
-          supplier
+          department
         );
       });
 
-      const fetchAndDisplayFilteredData = (
+      const fetchAndDisplayFilteredData = async  (
         dateStart,
         dateEnd,
         employee,
-        guest,
-        supplier
+        department,
+
       ) => {
         // Lógica para traer los datos filtrados - Ultima cosa
-        console.log(dateStart, dateEnd, employee, guest, supplier);
+            try {
+            // Construir los parámetros de consulta
+            const queryParams = new URLSearchParams();
+
+            if (dateStart) queryParams.append('start_date', dateStart);
+            if (dateEnd) queryParams.append('end_date', dateEnd);
+            if (employee) queryParams.append('user_type', employee);
+            if (department) queryParams.append('department_id', department);
+
+            const url = `${API_URL}/user/` + (queryParams.toString() ? `?${queryParams.toString()}` : '');
+
+            console.log('Fetching with URL:', url); // Para depuración
+
+            // Hacer la solicitud a la API
+            const response = await fetch(url);
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                const error = new Error('HTTP error');
+                error.detail = errorData.detail || 'Unknown error';
+                throw error;
+            }
+
+            const users = await response.json();
+            console.log('Fetched users:', users); // Para depuración
+
+            // Actualizar el estado y la interfaz
+            usersState = users;
+            if (Array.isArray(users)) {
+                loadTable(users); // Mostrar los datos en la tabla
+            }
+            } catch (error) {
+                console.error('Error fetching users:', error); // Para depuración
+                setTimeout(() => {
+                    showToast("Error al traer los usuarios");
+                }, 2000);
+            }
       };
 
+      
       const tbody = document.querySelector("table tbody");
       tbody.innerHTML = "";
 
       const createTableRow = (user) => {
         const tr = document.createElement("tr");
+
+        let entryExitTimes = '';
+        if (user.entry_exit_register && user.entry_exit_register.length > 0) {
+            entryExitTimes = user.entry_exit_register.map(register => {
+                const entryTime = new Date(register.entry_time).toLocaleString();
+                const exitTime = register.exit_time ? new Date(register.exit_time).toLocaleString() : '';
+                return `Entrada: ${entryTime}, Salida: ${exitTime}`;
+            }).join('<br>');
+        }
+
         tr.innerHTML = `
           <td>${user.document_id}</td>
           <td>${user.name}</td>
           <td>${user.role}</td>
+          <td>${entryExitTimes}</td>
           <td>
             <div class="actions">
-              <button>Editar</button>
-              <button class="delete-button">Eliminar</button>
+              <button class="edit-employee" id="edit-user" data-id="${user.id}">Editar</button>
+              <button class="delete-button" id="delete-user" data-id="${user.id}">Eliminar</button>
             </div>
           </td>
         `;
         return tr;
       };
+      
 
       const loadTable = (users) => {
+        tbody.innerHTML = ''; // Limpiar la tabla antes de cargar nuevos datos
         users.forEach((user) => {
-          const tr = createTableRow(user);
-          tbody.appendChild(tr);
-        });
-      };
+            const tr = createTableRow(user);
+            tbody.appendChild(tr);
+      });
+};
 
       const createUserOption = (user) => {
         const option = document.createElement("option");
@@ -703,25 +751,187 @@
       loadUsers();
 
       tbody.addEventListener("click", async function (event) {
-        if (event.target.classList.contains("delete-button")) {
-          const tr = event.target.closest("tr");
-          const documentId = tr.querySelector("td").textContent;
-          console.log("usersState", usersState)
-          console.log("name TR", documentId)
-          const user = usersState.find(
-            (user) => user.document_id === documentId
-          );
+        if (event.target && event.target.classList.contains("edit-employee")) {
+            event.preventDefault();
 
-          console.log("usuario seleccionado", user)
+        const userId = event.target.getAttribute("data-id");
+
+        const modal = document.createElement("div");
+        modal.style.position = "fixed";
+        modal.style.left = "0";
+        modal.style.top = "0";
+        modal.style.width = "100%";
+        modal.style.height = "100%";
+        modal.style.backgroundColor = "rgba(0, 0, 0, 0.5)";
+        modal.style.display = "flex";
+        modal.style.justifyContent = "center";
+        modal.style.alignItems = "center";
+        modal.innerHTML = `
+            <div style="background: white; padding: 20px; border-radius: 5px;">
+                <form id="modalForm">
+                    <h4 class="form-titles">Editar empleado</h4>
+                    <div>
+                        <label>Nombre:</label>
+                        <input type="text" id="userName" name="userName">
+                    </div>
+                    <div>
+                        <label>Area:</label>
+                        <select id="userDepartamentId" name="userDepartamentId">
+                            <option value="1">Sistemas</option>
+                            <option value="2">Mercadeo</option>
+                            <option value="3">Producción</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Rol:</label>
+                        <select id="userRole" name="userRole">
+                            <option value="1">Sistemas</option>
+                            <option value="2">Contaduria</option>
+                            <option value="3">Adminstración</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Tipo:</label>
+                        <select id="userType" name="userType">
+                            <option value="1">Empleado</option>
+                            <option value="2">Invitado</option>
+                            <option value="3">Proveedor</option>
+                        </select>
+                    </div>
+                    <div class="container-buttons-modal">
+                        <button class="delete-button" type="button" id="cancelButton">Cancelar</button>
+                        <button type="submit">Enviar</button>
+                    </div>
+                </form>
+            </div>
+        `;
+
+        function closeModal() {
+            modal.remove();
+        }
+
+        modal.querySelector("#cancelButton").addEventListener("click", closeModal);
+
+        modal.addEventListener("click", function (event) {
+            if (event.target === modal) {
+                closeModal();
+            }
+        });
+
+        modal.addEventListener("submit", async function (event) {
+            event.preventDefault();
+
+            const name = document.getElementById("userName").value;
+            const role = document.getElementById("userRole").value;
+            const departmentId = document.getElementById("userDepartamentId").value;
+            const userTypeId = document.getElementById("userType").value;
+            
+            try {
+                await fetch(`http://localhost:8000/api/v1/user/${userId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        name: name,
+                        role: parseInt(role),
+                        department_id: parseInt(departmentId),
+                        user_type_id: parseInt(userTypeId)
+                    })
+                });
+                closeModal();
+                loadUsers(); // Asumiendo que esto vuelve a cargar la lista de usuarios actualizada
+            } catch (error) {
+                setTimeout(function () {
+                    showToast(`${error.detail}`, "error");
+                }, 2000);
+            }
+        });
+
+        document.body.appendChild(modal);
+      }
+    });
+      
+      tbody.addEventListener("click", async function (event) {
+        if (
+          event.target.classList.contains("delete-button")) {
+          event.preventDefault();
+
+          const tr = event.target.closest("tr");
+          const userId = tr.querySelector(".delete-button").getAttribute("data-id");
+
           try {
-            await deleteEmployee(user.id);
+            await fetch(`http://localhost:8000/api/v1/user/${userId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            // Remover la fila de la tabla si la eliminación fue exitosa
             tr.remove();
           } catch (error) {
             console.error(error);
+            showToast("Error al eliminar el usuario.", "error");
           }
+
         }
       });
     });
+    document.addEventListener("DOMContentLoaded", function () {
+        // Seleccionar los botones
+        const buttonReport1 = document.querySelector(".button-report1");
+        const buttonReport2 = document.querySelector(".button-report2");
+        const buttonReport3 = document.querySelector(".button-report3");
+
+        // Función para mostrar la modal con el mensaje
+        const showModal = (message) => {
+            const modal = document.createElement("div");
+            modal.style.position = "fixed";
+            modal.style.left = "0";
+            modal.style.top = "0";
+            modal.style.width = "100%";
+            modal.style.height = "100%";
+            modal.style.backgroundColor = "rgba(0, 0, 0, 0.5)";
+            modal.style.display = "flex";
+            modal.style.justifyContent = "center";
+            modal.style.alignItems = "center";
+            modal.innerHTML = `
+                <div style="background: white; padding: 20px; border-radius: 5px;">
+                    <p>${message}</p>
+                    <button id="closeModalButton">Cerrar</button>
+                </div>
+            `;
+
+            document.body.appendChild(modal);
+
+            const closeModalButton = modal.querySelector("#closeModalButton");
+            closeModalButton.addEventListener("click", () => {
+                modal.remove();
+            });
+
+            // Cerrar la modal al hacer clic fuera de ella
+            modal.addEventListener("click", function (event) {
+                if (event.target === modal) {
+                    modal.remove();
+                }
+            });
+        };
+
+        // Agregar eventos a los botones
+        buttonReport1.addEventListener("click", () => {
+            showModal("SELECT user_id, SUM(EXTRACT(EPOCH FROM (exit_time - entry_time)) / 3600) AS total_hours FROM entry_exit_register GROUP BY user_id;");
+        });
+
+        buttonReport2.addEventListener("click", () => {
+            showModal("SELECT d.id AS department_id, d.name AS department_name, SUM(EXTRACT(EPOCH FROM (e.exit_time - e.entry_time)) / 3600) AS total_hours_worked FROM department d JOIN 'user' u ON d.id = u.department_id JOIN entry_exit_register e ON u.id = e.user_id WHERE e.entry_time IS NOT NULL AND e.exit_time IS NOT NULL GROUP BY d.id, d.name;");
+        });
+
+        buttonReport3.addEventListener("click", () => {
+            showModal("SELECT COUNT(*) AS people_inside FROM entry_exit_register WHERE entry_time IS NOT NULL AND exit_time IS NULL;");
+        });
+    });
+
   </script>
 </body>
 

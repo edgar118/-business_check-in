@@ -4,6 +4,7 @@ from typing import List, Optional
 from datetime import datetime
 
 from backend.schemas.user import User as UserSchema
+from backend.schemas.user import UserCreated
 from backend.schemas.user import UpdateUser
 from backend.schemas.user import EntryExitRegisterCreate, UserType, EntryRegisterCreate
 from backend.provider.user import Employee
@@ -23,7 +24,7 @@ def user_type(
 
 @router.post('/')
 def create(
-   user: UserSchema,
+   user: UserCreated,
    db:Session=Depends(get_db),
 
 ):  
@@ -47,25 +48,24 @@ def delete(
 ):  
     return Employee.delete(id, db)
 
-@router.get('/')
+@router.get('/', response_model=List[UserSchema])
 def get_user(
     start_date: Optional[datetime] = Query(None, description="Filter by start date"),
     end_date: Optional[datetime] = Query(None, description="Filter by end date"),
     user_type: Optional[int] = Query(None, description="Filter by user type"),
     department_id: Optional[int] = Query(None, description="Filter by department ID"),
-    db:Session=Depends(get_db),
-
-):  
+    db: Session = Depends(get_db),
+):
     return Employee.get_user(
-            db, 
-            start_date,
-            end_date,
-            user_type,
-            department_id
+        db, 
+        start_date,
+        end_date,
+        user_type,
+        department_id
     )
 
 @router.get('/type')
-def get_user(
+def get_user_type(
     db:Session=Depends(get_db)
 
 ):  

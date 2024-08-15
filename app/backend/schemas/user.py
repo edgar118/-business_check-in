@@ -12,9 +12,25 @@ class EntryExitRegisterSchema(BaseModel):
     is_archived: Optional[bool] = None
     reason: Optional[str] = None
 
+class UserType(BaseModel):
+    name: Optional[str] = None
 class User(BaseModel):
+    id: int
     name: str 
-    role: int
+    role: str
+    document_id: int
+    department_id: int
+    user_type_id: int
+
+    entry_exit_register: List[Optional[EntryExitRegisterSchema]] = []
+    user_type: Optional[UserType]
+    
+    class Config:
+        orm_mode = True
+
+class UserCreated(BaseModel):
+    name: str 
+    role: str
     document_id: int
     department_id: int
     user_type_id: int
@@ -26,7 +42,7 @@ class User(BaseModel):
 
 class UpdateUser(BaseModel):
     name: str 
-    role: str
+    role: int
     department_id: int
     user_type_id: int
     

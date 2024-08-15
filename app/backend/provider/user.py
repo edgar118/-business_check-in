@@ -1,6 +1,7 @@
 from fastapi import HTTPException, status
 from sqlalchemy import and_
 from sqlalchemy import func
+from sqlalchemy.orm import aliased
 from datetime import time
 
 from backend.model.user import User as UserModel
@@ -52,6 +53,8 @@ class Employee():
         if not Employee.user_exist_id(id, db) :
             raise HTTPException(status_code=404, detail="User not found")
         
+        type = db.query(UserType).filter(UserType.id == user.role).first()   
+        user.role = type.name     
         db_item = db.query(UserModel).filter(UserModel.id == id).update(user.dict(exclude_unset=True))
         db.commit()
 
@@ -75,17 +78,18 @@ class Employee():
             user_type,
             department_id
         ):
+        entry_exit_alias = aliased(EntryExitRegister)
 
-        query = db.query(UserModel)
+        query = db.query(UserModel).join(entry_exit_alias, UserModel.id == entry_exit_alias.user_id, isouter=True)
 
         conditions = []
         if start_date:
-            conditions.append(UserModel.created_at >= start_date)
+            conditions.append(entry_exit_alias.entry_time >= start_date)
         if end_date:
-            conditions.append(UserModel.created_at <= end_date)
+            conditions.append(entry_exit_alias.exit_time <= end_date)
         if user_type:
-            query = query.join(UserType)
-            conditions.append(UserType.id == user_type)
+            query = query.join(UserModel.user_type)
+            conditions.append(UserModel.user_type_id == user_type)
         if department_id:
             conditions.append(UserModel.department_id == department_id)
 
