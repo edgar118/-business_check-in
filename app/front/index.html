@@ -636,9 +636,7 @@
         department,
 
       ) => {
-        // Lógica para traer los datos filtrados - Ultima cosa
             try {
-            // Construir los parámetros de consulta
             const queryParams = new URLSearchParams();
 
             if (dateStart) queryParams.append('start_date', dateStart);
@@ -648,9 +646,8 @@
 
             const url = `${API_URL}/user/` + (queryParams.toString() ? `?${queryParams.toString()}` : '');
 
-            console.log('Fetching with URL:', url); // Para depuración
+            console.log('Fetching with URL:', url);
 
-            // Hacer la solicitud a la API
             const response = await fetch(url);
 
             if (!response.ok) {
@@ -661,15 +658,15 @@
             }
 
             const users = await response.json();
-            console.log('Fetched users:', users); // Para depuración
+            console.log('Fetched users:', users);
 
-            // Actualizar el estado y la interfaz
+
             usersState = users;
             if (Array.isArray(users)) {
-                loadTable(users); // Mostrar los datos en la tabla
+                loadTable(users);
             }
             } catch (error) {
-                console.error('Error fetching users:', error); // Para depuración
+                console.error('Error fetching users:', error);
                 setTimeout(() => {
                     showToast("Error al traer los usuarios");
                 }, 2000);
@@ -709,7 +706,7 @@
       
 
       const loadTable = (users) => {
-        tbody.innerHTML = ''; // Limpiar la tabla antes de cargar nuevos datos
+        tbody.innerHTML = '';
         users.forEach((user) => {
             const tr = createTableRow(user);
             tbody.appendChild(tr);
@@ -868,7 +865,6 @@
                 }
             });
 
-            // Remover la fila de la tabla si la eliminación fue exitosa
             tr.remove();
           } catch (error) {
             console.error(error);
@@ -879,12 +875,10 @@
       });
     });
     document.addEventListener("DOMContentLoaded", function () {
-        // Seleccionar los botones
         const buttonReport1 = document.querySelector(".button-report1");
         const buttonReport2 = document.querySelector(".button-report2");
         const buttonReport3 = document.querySelector(".button-report3");
 
-        // Función para mostrar la modal con el mensaje
         const showModal = (message) => {
             const modal = document.createElement("div");
             modal.style.position = "fixed";
@@ -910,7 +904,6 @@
                 modal.remove();
             });
 
-            // Cerrar la modal al hacer clic fuera de ella
             modal.addEventListener("click", function (event) {
                 if (event.target === modal) {
                     modal.remove();
@@ -918,7 +911,6 @@
             });
         };
 
-        // Agregar eventos a los botones
         buttonReport1.addEventListener("click", () => {
             showModal("SELECT user_id, SUM(EXTRACT(EPOCH FROM (exit_time - entry_time)) / 3600) AS total_hours FROM entry_exit_register GROUP BY user_id;");
         });
