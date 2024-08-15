@@ -840,7 +840,7 @@
                     })
                 });
                 closeModal();
-                loadUsers(); // Asumiendo que esto vuelve a cargar la lista de usuarios actualizada
+                loadUsers();
             } catch (error) {
                 setTimeout(function () {
                     showToast(`${error.detail}`, "error");
